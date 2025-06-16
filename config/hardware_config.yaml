@@ -1,0 +1,86 @@
+# ROS2 Car Fun - Hardware Configuration
+# 智能小车硬件配置文件
+
+# 运行模式配置
+hardware:
+  mode: "simulation"  # "hardware" or "simulation"
+  debug: false
+  i2c_bus: 1
+  i2c_address: 0x2B
+
+# 电机配置
+motors:
+  # 电机编号映射
+  left_front: 0   # L1
+  left_rear: 1    # L2  
+  right_front: 2  # R1
+  right_rear: 3   # R2
+  
+  # 速度限制
+  max_speed: 255
+  min_speed: 0
+  
+  # 运动学参数
+  wheel_base: 0.15    # 轴距 (m)
+  wheel_track: 0.13   # 轮距 (m) 
+  wheel_radius: 0.03  # 轮子半径 (m)
+
+# 舵机配置
+servos:
+  camera_pan:
+    id: 1
+    min_angle: 0
+    max_angle: 180
+    center_angle: 90
+    
+  camera_tilt:
+    id: 2
+    min_angle: 0
+    max_angle: 110  # 限制最大角度
+    center_angle: 90
+
+# LED配置
+leds:
+  count: 14
+  colors:
+    red: 0
+    green: 1
+    blue: 2
+    yellow: 3
+    purple: 4
+    cyan: 5
+    white: 6
+
+# 传感器配置
+sensors:
+  ultrasonic:
+    enabled: true
+    max_range: 200.0  # cm
+    min_range: 2.0    # cm
+    
+  line_sensor:
+    enabled: true
+    sensor_count: 4
+    # 传感器位置权重 (用于位置计算)
+    weights: [-1.5, -0.5, 0.5, 1.5]
+    
+  ir_receiver:
+    enabled: true
+
+# 音响配置
+audio:
+  beeper:
+    enabled: true
+    default_duration: 0.1  # 秒
+
+# 仿真模式配置
+simulation:
+  # 默认传感器值
+  default_ultrasonic_distance: 100.0  # cm
+  default_line_sensor_state: 0b0000   # 4位二进制
+  
+  # 传感器噪声模拟
+  ultrasonic_noise_range: 5.0  # cm
+  
+  # 运动模拟参数
+  motor_response_delay: 0.01  # 秒

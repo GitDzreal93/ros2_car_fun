@@ -1,0 +1,113 @@
+# ROS2 Car Parameters Configuration
+# 车辆参数配置文件
+
+# 车辆控制器参数
+car_controller:
+  ros__parameters:
+    max_linear_speed: 2.0      # 最大线速度 (m/s)
+    max_angular_speed: 1.0     # 最大角速度 (rad/s)
+    wheel_base: 0.15           # 轴距 (m) - 更新为麦克纳姆轮实际值
+    wheel_radius: 0.03         # 轮子半径 (m) - 更新为实际值
+    update_frequency: 50.0     # 更新频率 (Hz)
+
+    # 硬件集成参数
+    hardware_mode: "simulation"  # "hardware" 或 "simulation"
+    debug_mode: false          # 调试模式
+    speed_scale: 100.0         # 速度缩放因子 (m/s to motor units)
+    sensor_frequency: 10.0     # 传感器读取频率 (Hz)
+
+# 车辆模拟器参数
+car_simulator:
+  ros__parameters:
+    simulation_frequency: 50.0    # 模拟频率 (Hz)
+    
+    # 激光雷达参数
+    laser_range_max: 10.0         # 最大测距 (m)
+    laser_range_min: 0.1          # 最小测距 (m)
+    laser_angle_min: -3.14159     # 最小角度 (rad)
+    laser_angle_max: 3.14159      # 最大角度 (rad)
+    laser_angle_increment: 0.017453  # 角度增量 (rad, ~1度)
+    
+    # 环境参数
+    room_width: 10.0              # 房间宽度 (m)
+    room_height: 8.0              # 房间高度 (m)
+    
+    # 噪声参数
+    noise_level: 0.1              # 噪声水平
+    
+    # 障碍物配置
+    obstacles:
+      - {x: 3.0, y: 2.0, radius: 0.5}
+      - {x: 6.0, y: 5.0, radius: 0.8}
+      - {x: 1.5, y: 6.0, radius: 0.3}
+
+# 遥控参数
+car_teleop:
+  ros__parameters:
+    linear_speed_step: 0.1        # 线速度步长 (m/s)
+    angular_speed_step: 0.1       # 角速度步长 (rad/s)
+    max_linear_speed: 2.0         # 最大线速度 (m/s)
+    max_angular_speed: 1.0        # 最大角速度 (rad/s)
+    
+    # 键盘映射 (可选)
+    key_timeout: 0.5              # 按键超时 (s)
+
+# TF变换参数
+transforms:
+  # base_link到激光雷达的变换
+  laser_transform:
+    x: 0.0
+    y: 0.0
+    z: 0.1
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  
+  # base_link到IMU的变换
+  imu_transform:
+    x: 0.0
+    y: 0.0
+    z: 0.05
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+# 机器人物理参数
+robot_physical:
+  mass: 1.0                     # 质量 (kg)
+  length: 0.4                   # 长度 (m)
+  width: 0.2                    # 宽度 (m)
+  height: 0.1                   # 高度 (m)
+  
+  # 轮子参数
+  wheel:
+    radius: 0.05                # 半径 (m)
+    width: 0.03                 # 宽度 (m)
+    separation: 0.3             # 轮距 (m)
+
+# 传感器参数
+sensors:
+  # IMU传感器
+  imu:
+    frequency: 100.0            # 发布频率 (Hz)
+    noise_gyro: 0.01            # 陀螺仪噪声
+    noise_accel: 0.1            # 加速度计噪声
+  
+  # 激光雷达
+  lidar:
+    frequency: 10.0             # 发布频率 (Hz)
+    noise_range: 0.01           # 距离噪声 (m)
+
+# 导航参数 (预留)
+navigation:
+  # 路径规划
+  planner:
+    algorithm: "A*"             # 规划算法
+    resolution: 0.1             # 地图分辨率 (m)
+    inflation_radius: 0.2       # 膨胀半径 (m)
+  
+  # 控制器
+  controller:
+    lookahead_distance: 0.5     # 前瞻距离 (m)
+    max_linear_vel: 1.0         # 最大线速度 (m/s)
+    max_angular_vel: 0.5        # 最大角速度 (rad/s)

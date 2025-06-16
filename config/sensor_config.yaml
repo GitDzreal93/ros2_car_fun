@@ -1,0 +1,125 @@
+# ROS2 Car Fun - Sensor Configuration
+# 传感器配置文件
+
+# 超声波传感器配置
+ultrasonic_node:
+  ros__parameters:
+    hardware_mode: "simulation"     # "hardware" 或 "simulation"
+    publish_frequency: 10.0         # 发布频率 (Hz)
+    frame_id: "ultrasonic_frame"    # 坐标系ID
+    min_range: 0.02                 # 最小测距 (m)
+    max_range: 2.0                  # 最大测距 (m)
+    field_of_view: 0.26             # 视场角 (rad, ~15度)
+    enable_filtering: true          # 启用滤波
+    filter_window_size: 5           # 滤波窗口大小
+    max_change_rate: 0.5            # 最大变化率 (m/s)
+    debug_mode: false               # 调试模式
+
+# 巡线传感器配置
+line_sensor_node:
+  ros__parameters:
+    hardware_mode: "simulation"     # "hardware" 或 "simulation"
+    publish_frequency: 20.0         # 发布频率 (Hz)
+    sensor_positions: [-1.5, -0.5, 0.5, 1.5]  # 传感器位置权重
+    line_threshold: 0.5             # 线检测阈值
+    enable_smoothing: true          # 启用位置平滑
+    smoothing_factor: 0.8           # 平滑因子 (0-1)
+    debug_mode: false               # 调试模式
+
+# 红外遥控接收器配置
+ir_receiver_node:
+  ros__parameters:
+    hardware_mode: "simulation"     # "hardware" 或 "simulation"
+    publish_frequency: 10.0         # 发布频率 (Hz)
+    enable_velocity_control: true   # 启用速度控制
+    linear_speed: 1.0               # 线速度 (m/s)
+    angular_speed: 1.0              # 角速度 (rad/s)
+    command_timeout: 0.5            # 命令超时时间 (s)
+    debug_mode: false               # 调试模式
+    
+    # 自定义按键映射 (可选)
+    custom_key_mapping:
+      0x45: "power"
+      0x46: "vol_up"
+      0x47: "func_stop"
+      0x15: "up"        # 前进
+      0x09: "down"      # 后退
+      0x0C: "one"       # 左转
+      0x5E: "three"     # 右转
+      0x08: "four"      # 左移
+      0x5A: "six"       # 右移
+      0x1C: "five"      # 停止
+
+# 传感器融合配置
+sensor_fusion:
+  ros__parameters:
+    enable_fusion: true             # 启用传感器融合
+    ultrasonic_weight: 0.7          # 超声波权重
+    line_sensor_weight: 0.3         # 巡线传感器权重
+    
+    # 障碍物检测
+    obstacle_detection:
+      enable: true
+      min_distance: 0.15            # 最小安全距离 (m)
+      warning_distance: 0.30        # 警告距离 (m)
+      
+    # 线跟踪
+    line_tracking:
+      enable: true
+      max_deviation: 1.0            # 最大偏差
+      lost_line_timeout: 2.0        # 丢线超时 (s)
+
+# 传感器标定参数
+calibration:
+  ultrasonic:
+    offset: 0.0                     # 距离偏移 (m)
+    scale_factor: 1.0               # 缩放因子
+    
+  line_sensors:
+    # 每个传感器的阈值
+    thresholds: [512, 512, 512, 512]  # ADC阈值
+    # 传感器位置 (相对于车体中心)
+    positions:
+      left_outer: [-0.08, 0.12]     # [x, y] (m)
+      left_inner: [-0.03, 0.12]
+      right_inner: [0.03, 0.12]
+      right_outer: [0.08, 0.12]
+
+# 数据记录配置
+data_logging:
+  enable: false                     # 启用数据记录
+  log_directory: "/tmp/sensor_logs" # 日志目录
+  log_frequency: 1.0                # 记录频率 (Hz)
+  
+  # 记录的数据类型
+  log_types:
+    ultrasonic: true
+    line_sensors: true
+    ir_commands: true
+    
+# 可视化配置
+visualization:
+  enable: true                      # 启用可视化
+  
+  # 超声波可视化
+  ultrasonic_viz:
+    show_cone: true                 # 显示检测锥
+    cone_color: [1.0, 1.0, 0.0, 0.3]  # RGBA颜色
+    
+  # 巡线可视化
+  line_viz:
+    show_sensors: true              # 显示传感器位置
+    show_line_position: true        # 显示线位置
+    sensor_color: [0.0, 1.0, 0.0, 1.0]  # 传感器颜色
+    line_color: [1.0, 0.0, 0.0, 1.0]    # 线颜色
+
+# 性能监控配置
+performance:
+  enable_monitoring: true           # 启用性能监控
+  statistics_frequency: 1.0         # 统计频率 (Hz)
+  
+  # 性能阈值
+  thresholds:
+    max_processing_time: 0.01       # 最大处理时间 (s)
+    min_success_rate: 0.95          # 最小成功率
+    max_error_rate: 0.05            # 最大错误率
