@@ -38,8 +38,6 @@ setup(
     entry_points={
         'console_scripts': [
             'car_controller = ros2_car_fun.car_controller:main',
-            'car_simulator = ros2_car_fun.car_simulator:main',
-            'car_teleop = ros2_car_fun.car_teleop:main',
             'hardware_test = test_hardware:main',
             'ultrasonic_node = ros2_car_fun.sensors.ultrasonic_node:main',
             'line_sensor_node = ros2_car_fun.sensors.line_sensor_node:main',
