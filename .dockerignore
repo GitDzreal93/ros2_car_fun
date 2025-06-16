@@ -1,0 +1,53 @@
+# 排除文档和资料文件
+.docs/
+*.md
+README*
+
+# 排除版本控制文件
+.git/
+.gitignore
+.gitattributes
+
+# 排除 Python 缓存文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+
+# 排除 IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 排除构建文件
+build/
+install/
+log/
+*.egg-info/
+dist/
+
+# 排除临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 排除测试覆盖率文件
+.coverage
+htmlcov/
+
+# 排除环境文件
+.env
+.venv
+venv/
+env/
+
+# 排除 Docker 相关文件
+Dockerfile*
+docker-compose*.yml
+.dockerignore

@@ -1,282 +1,184 @@
-# ROS2 Car Fun - 车辆控制与仿真项目
+# ROS2 Car Fun - 智能小车控制系统
 
-这是一个基于ROS2的车辆控制和仿真项目，使用Python3开发，展示了ROS2的基本概念和最佳实践。
+一个完整的基于ROS2的智能小车控制系统，集成了硬件抽象层、传感器处理和视觉功能。
 
-## 项目特性
+## ✨ 特性
 
-- 🚗 **车辆控制器**: 实现差分驱动车辆的运动控制
-- 🎮 **键盘遥控**: 通过键盘实时控制车辆运动
-- 🌍 **环境模拟**: 模拟车辆在室内环境中的行为
-- 📡 **传感器仿真**: 激光雷达和IMU传感器数据模拟
-- 🗺️ **地图发布**: 静态环境地图生成和发布
-- 📊 **实时数据**: 里程计、关节状态等实时数据发布
+- 🚗 **麦克纳姆轮支持**: 支持全向运动控制
+- 🔧 **硬件抽象层**: 统一的硬件接口，支持仿真和实际硬件
+- 📡 **传感器集成**: 超声波、巡线传感器、红外遥控
+- 👁️ **视觉功能**: 摄像头、颜色检测、人脸跟踪、二维码识别
+- 🎮 **多种控制方式**: 红外遥控、程序控制
+- 📊 **完整测试**: 单元测试、集成测试、系统测试
+- ⚙️ **参数化配置**: 灵活的配置系统
+- 🔧 **模块化设计**: 易于扩展和定制
 
-## 项目结构
+## 📁 项目结构
 
 ```
 ros2_car_fun/
-├── package.xml              # ROS2包配置文件
-├── setup.py                 # Python包安装配置
-├── setup.cfg                # 安装选项配置
-├── README.md                # 项目说明文档
+├── package.xml                    # ROS2包配置文件
+├── setup.py                       # Python包安装配置
+├── setup.cfg                      # 安装选项配置
+├── README.md                      # 项目说明文档
+├── .gitignore                     # Git忽略文件
 ├── resource/
-│   └── ros2_car_fun         # 包资源标识文件
-├── ros2_car_fun/            # Python源代码目录
-│   ├── __init__.py          # Python包初始化文件
-│   ├── car_controller.py    # 车辆控制器节点
-│   ├── car_simulator.py     # 车辆模拟器节点
-│   └── car_teleop.py        # 键盘遥控节点
-├── launch/
-│   └── car_demo.launch.py   # 启动文件
-└── config/
-    └── car_params.yaml      # 参数配置文件
+│   └── ros2_car_fun               # 包资源标识文件
+├── ros2_car_fun/                  # Python源代码目录
+│   ├── __init__.py                # Python包初始化文件
+│   ├── car_controller.py          # 车辆控制器节点
+│   ├── hardware/                  # 硬件抽象层
+│   │   ├── __init__.py
+│   │   ├── hardware_interface.py  # 硬件接口
+│   │   ├── mecanum_controller.py  # 麦克纳姆轮控制器
+│   │   └── raspbot_driver.py      # 智能小车驱动
+│   ├── sensors/                   # 传感器节点
+│   │   ├── __init__.py
+│   │   ├── ultrasonic_node.py     # 超声波传感器
+│   │   ├── line_sensor_node.py    # 巡线传感器
+│   │   └── ir_receiver_node.py    # 红外接收器
+│   └── vision/                    # 视觉处理节点
+│       ├── __init__.py
+│       ├── camera_node.py         # 摄像头节点
+│       ├── color_detection.py     # 颜色检测
+│       ├── face_tracking.py       # 人脸跟踪
+│       ├── qr_detection.py        # 二维码检测
+│       └── object_detection.py    # 物体检测
+├── launch/                        # 启动文件
+│   ├── car_demo.launch.py         # 基础演示启动
+│   ├── hardware_test.launch.py    # 硬件测试启动
+│   ├── sensors.launch.py          # 传感器启动
+│   └── vision.launch.py           # 视觉功能启动
+├── config/                        # 配置文件
+│   ├── car_params.yaml            # 基础参数
+│   ├── hardware_config.yaml       # 硬件配置
+│   ├── sensor_config.yaml         # 传感器配置
+│   └── vision_config.yaml         # 视觉配置
+└── test_*.py                      # 测试脚本
 ```
 
-## 节点说明
+## 🚀 核心组件
 
-### 1. 车辆控制器 (car_controller)
+### 1. 硬件抽象层
+- `HardwareInterface`: 主要硬件接口
+- `MecanumController`: 麦克纳姆轮控制器
+- `RaspbotDriver`: 智能小车底层驱动
 
-**功能**: 接收速度命令，控制车辆运动，发布里程计和关节状态信息
+### 2. 传感器系统
+- **超声波传感器**: 距离测量和避障
+- **巡线传感器**: 4路红外传感器，线位置计算
+- **红外遥控**: 遥控信号接收和命令解析
 
-**订阅话题**:
-- `/cmd_vel` (geometry_msgs/Twist): 速度命令
+### 3. 视觉系统
+- **摄像头节点**: 图像采集和云台控制
+- **颜色检测**: HSV颜色空间检测和跟踪
+- **人脸跟踪**: Haar级联分类器检测
+- **二维码检测**: OpenCV + pyzbar双重检测
+- **物体检测**: 基于轮廓的物体检测
 
-**发布话题**:
-- `/odom` (nav_msgs/Odometry): 里程计信息
-- `/joint_states` (sensor_msgs/JointState): 关节状态
+### 4. 车辆控制器
+- 接收速度命令，控制车辆运动
+- 发布里程计和状态信息
+- 集成硬件抽象层
 
-**参数**:
-- `max_linear_speed`: 最大线速度 (默认: 2.0 m/s)
-- `max_angular_speed`: 最大角速度 (默认: 1.0 rad/s)
-- `wheel_base`: 轴距 (默认: 0.3 m)
-- `wheel_radius`: 轮子半径 (默认: 0.05 m)
-
-### 2. 车辆模拟器 (car_simulator)
-
-**功能**: 模拟车辆在环境中的行为，生成传感器数据
-
-**订阅话题**:
-- `/cmd_vel` (geometry_msgs/Twist): 速度命令
-
-**发布话题**:
-- `/scan` (sensor_msgs/LaserScan): 激光雷达数据
-- `/imu` (sensor_msgs/Imu): IMU数据
-- `/pose` (geometry_msgs/PoseStamped): 位姿信息
-- `/map` (nav_msgs/OccupancyGrid): 环境地图
-
-**参数**:
-- `simulation_frequency`: 模拟频率 (默认: 50.0 Hz)
-- `laser_range_max`: 激光雷达最大距离 (默认: 10.0 m)
-- `noise_level`: 噪声水平 (默认: 0.1)
-
-### 3. 键盘遥控 (car_teleop)
-
-**功能**: 通过键盘控制车辆运动
-
-**发布话题**:
-- `/cmd_vel` (geometry_msgs/Twist): 速度命令
-
-**控制键位**:
-- `w`: 前进
-- `s`: 后退
-- `a`: 左转
-- `d`: 右转
-- `q`: 前进+左转
-- `e`: 前进+右转
-- `z`: 后退+左转
-- `c`: 后退+右转
-- `空格`: 停止
-- `Ctrl+C`: 退出
-
-## 安装和使用
+## 🛠️ 安装和使用
 
 ### 前置条件
-
 - ROS2 (推荐 Humble 或更新版本)
 - Python 3.8+
-- 必要的ROS2 Python包:
-  ```bash
-  sudo apt install ros-humble-rclpy ros-humble-std-msgs ros-humble-geometry-msgs \
-                   ros-humble-sensor-msgs ros-humble-nav-msgs ros-humble-tf2-ros \
-                   ros-humble-robot-state-publisher
-  ```
+- OpenCV, NumPy等依赖包
 
 ### 编译安装
+```bash
+# 创建工作空间
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
 
-1. **创建工作空间** (如果还没有):
-   ```bash
-   mkdir -p ~/ros2_ws/src
-   cd ~/ros2_ws/src
-   ```
+# 复制项目
+cp -r /path/to/ros2_car_fun .
 
-2. **复制项目到工作空间**:
-   ```bash
-   # 如果项目已在其他位置，复制到src目录
-   cp -r /path/to/ros2_car_fun ~/ros2_ws/src/
-   ```
+# 编译
+cd ~/ros2_ws
+colcon build --packages-select ros2_car_fun
 
-3. **编译项目**:
-   ```bash
-   cd ~/ros2_ws
-   colcon build --packages-select ros2_car_fun
-   ```
-
-4. **设置环境**:
-   ```bash
-   source ~/ros2_ws/install/setup.bash
-   ```
+# 设置环境
+source ~/ros2_ws/install/setup.bash
+```
 
 ### 运行示例
-
-#### 方法1: 使用Launch文件 (推荐)
-
-启动完整的演示系统:
 ```bash
+# 基础演示
 ros2 launch ros2_car_fun car_demo.launch.py
+
+# 硬件测试
+ros2 launch ros2_car_fun hardware_test.launch.py
+
+# 传感器功能
+ros2 launch ros2_car_fun sensors.launch.py
+
+# 视觉功能
+ros2 launch ros2_car_fun vision.launch.py
 ```
 
-只启动控制器和遥控 (不启动模拟器):
-```bash
-ros2 launch ros2_car_fun car_demo.launch.py use_simulator:=false
-```
-
-只启动控制器和模拟器 (不启动遥控):
-```bash
-ros2 launch ros2_car_fun car_demo.launch.py use_teleop:=false
-```
-
-#### 方法2: 单独启动节点
-
-在不同终端中分别运行:
+## 🧪 测试
 
 ```bash
-# 终端1: 启动车辆控制器
-ros2 run ros2_car_fun car_controller
+# 硬件测试
+python3 test_hardware.py
 
-# 终端2: 启动车辆模拟器
-ros2 run ros2_car_fun car_simulator
+# 传感器测试
+python3 test_sensors.py
 
-# 终端3: 启动键盘遥控
-ros2 run ros2_car_fun car_teleop
+# 视觉测试
+python3 test_vision.py
+
+# 集成测试
+python3 test_integration.py
+
+# 完整系统测试
+python3 test_full_system.py
 ```
 
-### 可视化
-
-使用RViz2查看仿真效果:
-```bash
-rviz2
-```
-
-在RViz2中添加以下显示项:
-- **Map**: 话题 `/map`
-- **LaserScan**: 话题 `/scan`
-- **Odometry**: 话题 `/odom`
-- **RobotModel**: 显示机器人模型
-- **TF**: 显示坐标变换
-
-## 话题和服务
-
-### 主要话题
+## 📊 主要话题
 
 | 话题名 | 消息类型 | 描述 |
 |--------|----------|------|
 | `/cmd_vel` | geometry_msgs/Twist | 速度命令 |
 | `/odom` | nav_msgs/Odometry | 里程计信息 |
-| `/scan` | sensor_msgs/LaserScan | 激光雷达数据 |
-| `/imu` | sensor_msgs/Imu | IMU数据 |
-| `/map` | nav_msgs/OccupancyGrid | 环境地图 |
-| `/joint_states` | sensor_msgs/JointState | 关节状态 |
-| `/pose` | geometry_msgs/PoseStamped | 位姿信息 |
+| `/ultrasonic/range` | sensor_msgs/Range | 超声波距离 |
+| `/line_sensors/raw` | std_msgs/Bool[4] | 巡线传感器数据 |
+| `/camera/image_raw` | sensor_msgs/Image | 摄像头图像 |
+| `/color_detection/detected` | std_msgs/Bool | 颜色检测结果 |
+| `/face_tracking/detected` | std_msgs/Bool | 人脸检测结果 |
+| `/qr_detection/content` | std_msgs/String | 二维码内容 |
 
-### 坐标系
+## ⚙️ 配置
 
-- `map`: 世界坐标系
-- `odom`: 里程计坐标系
-- `base_link`: 机器人本体坐标系
-- `laser_frame`: 激光雷达坐标系
-- `imu_frame`: IMU坐标系
+项目参数可以通过配置文件进行调整：
+- `config/hardware_config.yaml`: 硬件参数
+- `config/sensor_config.yaml`: 传感器参数  
+- `config/vision_config.yaml`: 视觉参数
 
-## 参数配置
+## 🔧 开发和扩展
 
-项目参数可以通过以下方式配置:
+### 添加新传感器
+1. 在 `sensors/` 目录下创建新的传感器节点
+2. 在 `setup.py` 中添加入口点
+3. 创建相应的配置文件
 
-1. **配置文件**: 编辑 `config/car_params.yaml`
-2. **启动参数**: 在launch文件中修改参数
-3. **命令行**: 使用 `--ros-args -p` 参数
+### 添加新的视觉功能
+1. 在 `vision/` 目录下创建新的视觉节点
+2. 继承基础视觉节点类
+3. 实现特定的图像处理算法
 
-示例:
-```bash
-ros2 run ros2_car_fun car_controller --ros-args -p max_linear_speed:=1.5
-```
-
-## 开发和扩展
-
-### 添加新节点
-
-1. 在 `ros2_car_fun/` 目录下创建新的Python文件
-2. 在 `setup.py` 中添加新的入口点
-3. 重新编译项目
-
-### 添加新的传感器
-
-1. 在模拟器节点中添加传感器模拟逻辑
-2. 创建相应的发布器
-3. 在launch文件中添加必要的变换
-
-### 自定义环境
-
-修改 `car_simulator.py` 中的环境参数:
-- `room_width`, `room_height`: 房间尺寸
-- `obstacles`: 障碍物列表
-
-## 故障排除
-
-### 常见问题
-
-1. **节点无法启动**:
-   - 检查ROS2环境是否正确设置
-   - 确认所有依赖包已安装
-   - 检查Python路径和权限
-
-2. **键盘控制无响应**:
-   - 确保终端有焦点
-   - 检查终端权限设置
-   - 尝试在不同终端中运行
-
-3. **可视化问题**:
-   - 检查话题是否正确发布: `ros2 topic list`
-   - 确认坐标变换正常: `ros2 run tf2_tools view_frames`
-   - 检查RViz2配置
-
-### 调试命令
-
-```bash
-# 查看活动节点
-ros2 node list
-
-# 查看话题列表
-ros2 topic list
-
-# 查看话题数据
-ros2 topic echo /cmd_vel
-
-# 查看节点信息
-ros2 node info /car_controller
-
-# 查看参数
-ros2 param list /car_controller
-```
-
-## 许可证
+## 📝 许可证
 
 Apache License 2.0
 
-## 贡献
+## 🤝 贡献
 
 欢迎提交Issue和Pull Request来改进这个项目！
 
-## 联系方式
+## 📞 联系方式
 
-如有问题或建议，请通过以下方式联系:
-- Email: developer@example.com
-- GitHub Issues: [项目Issues页面]
+如有问题或建议，请通过GitHub Issues联系。

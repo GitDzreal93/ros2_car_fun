@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  ros2-car:
+    build: .
+    image: ros2-car-fun:latest
+    container_name: ros2-car-system
+    restart: unless-stopped
+    
+    # 网络模式 - 使用主机网络以便 ROS2 节点发现
+    network_mode: host
+    
+    # 特权模式 - 访问硬件设备
+    privileged: true
+    
+    # 设备挂载 - I2C, GPIO, 摄像头
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+      - /dev/video0:/dev/video0
+      - /dev/gpiomem:/dev/gpiomem
+    
+    # 卷挂载
+    volumes:
+      - /dev:/dev
+      - /sys:/sys
+      - /proc:/proc
+      - ./config:/ros2_ws/src/ros2_car_fun/config
+      - ./logs:/ros2_ws/logs
+    
+    # 环境变量
+    environment:
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedx_cpp
+      - DISPLAY=${DISPLAY}
+      - HARDWARE_MODE=hardware
+    
+    # 启动命令
+    command: >
+      bash -c "
+        /setup_hardware.sh &&
+        ros2 launch ros2_car_fun car_system.launch.py
+      "
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "ros2", "node", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 可选：仿真模式服务
+  ros2-car-sim:
+    build: .
+    image: ros2-car-fun:latest
+    container_name: ros2-car-simulation
+    restart: unless-stopped
+    profiles: ["simulation"]
+    
+    network_mode: host
+    
+    volumes:
+      - ./config:/ros2_ws/src/ros2_car_fun/config
+      - ./logs:/ros2_ws/logs
+    
+    environment:
+      - ROS_DOMAIN_ID=1
+      - RMW_IMPLEMENTATION=rmw_cyclonedx_cpp
+      - HARDWARE_MODE=simulation
+    
+    command: >
+      bash -c "
+        ros2 launch ros2_car_fun car_system.launch.py
+      "
+
+  # 可选：硬件测试服务
+  hardware-test:
+    build: .
+    image: ros2-car-fun:latest
+    container_name: ros2-hardware-test
+    restart: "no"
+    profiles: ["test"]
+    
+    network_mode: host
+    privileged: true
+    
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+      - /dev/video0:/dev/video0
+      - /dev/gpiomem:/dev/gpiomem
+    
+    volumes:
+      - /dev:/dev
+      - /sys:/sys
+      - ./config:/ros2_ws/src/ros2_car_fun/config
+    
+    environment:
+      - ROS_DOMAIN_ID=0
+      - HARDWARE_MODE=hardware
+    
+    command: >
+      bash -c "
+        /setup_hardware.sh &&
+        ros2 launch ros2_car_fun hardware_test.launch.py mode:=hardware test:=all
+      "

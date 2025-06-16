@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', [
-            'launch/car_demo.launch.py',
+            'launch/car_system.launch.py',
             'launch/hardware_test.launch.py',
             'launch/sensors.launch.py',
             'launch/vision.launch.py'

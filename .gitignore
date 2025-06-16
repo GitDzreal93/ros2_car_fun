@@ -1,8 +1,8 @@
 # ROS2 Car Fun - Git Ignore File
 # 忽略不需要版本控制的文件和目录
 
-# 文档资料目录 (用户要求)
-.docs/
+# 注意：.docs/ 目录包含重要的技术资料，不要忽略
+# docs/ 目录如果是自动生成的文档可以忽略
 docs/
 
 # Python 编译文件
@@ -145,3 +145,5 @@ cython_debug/
 # 配置文件中的敏感信息 (如果有)
 # config/secrets.yaml
 # config/private.yaml
+
+.docs/
