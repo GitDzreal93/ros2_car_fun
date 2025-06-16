@@ -13,17 +13,21 @@ setup(
         ('share/' + package_name + '/launch', [
             'launch/car_demo.launch.py',
             'launch/hardware_test.launch.py',
-            'launch/sensors.launch.py'
+            'launch/sensors.launch.py',
+            'launch/vision.launch.py'
         ]),
         ('share/' + package_name + '/config', [
             'config/car_params.yaml',
             'config/hardware_config.yaml',
-            'config/sensor_config.yaml'
+            'config/sensor_config.yaml',
+            'config/vision_config.yaml'
         ]),
     ],
     install_requires=[
         'setuptools',
         'smbus2',  # I2C communication (optional for simulation)
+        'opencv-python',  # Computer vision (optional for simulation)
+        'numpy',  # Numerical computing
     ],
     zip_safe=True,
     maintainer='Developer',
@@ -42,6 +46,12 @@ setup(
             'ir_receiver_node = ros2_car_fun.sensors.ir_receiver_node:main',
             'sensor_test = test_sensors:main',
             'integration_test = test_integration:main',
+            'camera_node = ros2_car_fun.vision.camera_node:main',
+            'color_detection_node = ros2_car_fun.vision.color_detection:main',
+            'face_tracking_node = ros2_car_fun.vision.face_tracking:main',
+            'qr_detection_node = ros2_car_fun.vision.qr_detection:main',
+            'object_detection_node = ros2_car_fun.vision.object_detection:main',
+            'vision_test = test_vision:main',
         ],
     },
 )

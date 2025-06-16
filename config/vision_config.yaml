@@ -1,0 +1,211 @@
+# ROS2 Car Fun - Vision Configuration
+# 视觉处理配置文件
+
+# 摄像头节点配置
+camera_node:
+  ros__parameters:
+    hardware_mode: "simulation"     # "hardware" 或 "simulation"
+    camera_index: 0                 # 摄像头设备索引
+    image_width: 640                # 图像宽度
+    image_height: 480               # 图像高度
+    fps: 30.0                       # 帧率
+    publish_frequency: 30.0         # 发布频率 (Hz)
+    enable_compressed: true         # 启用压缩图像
+    jpeg_quality: 80                # JPEG压缩质量 (0-100)
+    
+    # 图像参数
+    auto_exposure: true             # 自动曝光
+    brightness: 50                  # 亮度 (0-100)
+    contrast: 50                    # 对比度 (0-100)
+    saturation: 50                  # 饱和度 (0-100)
+    
+    # 云台控制
+    enable_servo_control: true      # 启用舵机控制
+    pan_center: 90                  # 水平中心角度
+    tilt_center: 90                 # 垂直中心角度
+    pan_range: 60                   # 水平运动范围 (±度)
+    tilt_range: 30                  # 垂直运动范围 (±度)
+    servo_speed: 2.0                # 舵机速度 (度/秒)
+    
+    debug_mode: false               # 调试模式
+
+# 颜色检测节点配置
+color_detection_node:
+  ros__parameters:
+    target_color: "red"             # 目标颜色
+    enable_multiple_colors: true    # 启用多颜色检测
+    min_area: 500                   # 最小面积
+    max_area: 50000                 # 最大面积
+    blur_kernel_size: 5             # 模糊核大小
+    morphology_kernel_size: 5       # 形态学核大小
+    enable_tracking: true           # 启用跟踪
+    tracking_smoothing: 0.8         # 跟踪平滑因子
+    publish_debug_image: true       # 发布调试图像
+    debug_mode: false               # 调试模式
+
+# 人脸跟踪节点配置
+face_tracking_node:
+  ros__parameters:
+    cascade_file: "haarcascade_frontalface_default.xml"  # 级联文件
+    scale_factor: 1.1               # 缩放因子
+    min_neighbors: 5                # 最小邻居数
+    min_size_width: 30              # 最小宽度
+    min_size_height: 30             # 最小高度
+    max_size_width: 300             # 最大宽度
+    max_size_height: 300            # 最大高度
+    enable_tracking: true           # 启用跟踪
+    tracking_smoothing: 0.7         # 跟踪平滑因子
+    track_largest_face: true        # 跟踪最大人脸
+    publish_debug_image: true       # 发布调试图像
+    enable_recognition: false       # 启用人脸识别
+    debug_mode: false               # 调试模式
+
+# 二维码检测节点配置
+qr_detection_node:
+  ros__parameters:
+    detection_method: "opencv"      # "opencv", "pyzbar", "both"
+    enable_command_parsing: true    # 启用命令解析
+    command_prefix: "CAR:"          # 命令前缀
+    enable_tracking: false          # 启用跟踪
+    min_area: 100                   # 最小面积
+    max_area: 100000                # 最大面积
+    publish_debug_image: true       # 发布调试图像
+    debug_mode: false               # 调试模式
+
+# 物体检测节点配置
+object_detection_node:
+  ros__parameters:
+    detection_method: "contour"     # "contour", "template"
+    min_area: 1000                  # 最小面积
+    max_area: 50000                 # 最大面积
+    min_perimeter: 100              # 最小周长
+    blur_kernel_size: 5             # 模糊核大小
+    canny_threshold1: 50            # Canny阈值1
+    canny_threshold2: 150           # Canny阈值2
+    enable_shape_detection: true    # 启用形状检测
+    enable_tracking: false          # 启用跟踪
+    publish_debug_image: true       # 发布调试图像
+    debug_mode: false               # 调试模式
+
+# 颜色范围定义 (HSV)
+color_ranges:
+  red:
+    range1: [0, 50, 50, 10, 255, 255]      # 红色范围1
+    range2: [170, 50, 50, 180, 255, 255]   # 红色范围2
+  green: [40, 50, 50, 80, 255, 255]        # 绿色
+  blue: [100, 50, 50, 130, 255, 255]       # 蓝色
+  yellow: [20, 50, 50, 30, 255, 255]       # 黄色
+  orange: [10, 50, 50, 20, 255, 255]       # 橙色
+  purple: [130, 50, 50, 170, 255, 255]     # 紫色
+  cyan: [80, 50, 50, 100, 255, 255]        # 青色
+  white: [0, 0, 200, 180, 30, 255]         # 白色
+  black: [0, 0, 0, 180, 255, 30]           # 黑色
+
+# 视觉算法参数
+algorithms:
+  # 图像预处理
+  preprocessing:
+    enable_histogram_equalization: false   # 直方图均衡化
+    enable_gamma_correction: false         # 伽马校正
+    gamma_value: 1.0                       # 伽马值
+    
+  # 滤波参数
+  filtering:
+    gaussian_kernel_size: 5                # 高斯滤波核大小
+    bilateral_d: 9                         # 双边滤波直径
+    bilateral_sigma_color: 75              # 双边滤波颜色标准差
+    bilateral_sigma_space: 75              # 双边滤波空间标准差
+    
+  # 边缘检测
+  edge_detection:
+    method: "canny"                        # "canny", "sobel", "laplacian"
+    canny_low: 50                          # Canny低阈值
+    canny_high: 150                        # Canny高阈值
+    
+  # 形态学操作
+  morphology:
+    enable: true                           # 启用形态学操作
+    kernel_size: 5                         # 核大小
+    iterations: 1                          # 迭代次数
+
+# 跟踪算法配置
+tracking:
+  # 卡尔曼滤波
+  kalman_filter:
+    enable: false                          # 启用卡尔曼滤波
+    process_noise: 0.1                     # 过程噪声
+    measurement_noise: 0.1                 # 测量噪声
+    
+  # 粒子滤波
+  particle_filter:
+    enable: false                          # 启用粒子滤波
+    num_particles: 100                     # 粒子数量
+    
+  # 简单跟踪
+  simple_tracking:
+    enable: true                           # 启用简单跟踪
+    max_distance: 100                      # 最大距离 (像素)
+    smoothing_factor: 0.8                  # 平滑因子
+
+# 性能优化配置
+performance:
+  # 图像缩放
+  image_scaling:
+    enable: false                          # 启用图像缩放
+    scale_factor: 0.5                      # 缩放因子
+    
+  # ROI (感兴趣区域)
+  roi:
+    enable: false                          # 启用ROI
+    x: 0.25                                # ROI起始X (归一化)
+    y: 0.25                                # ROI起始Y (归一化)
+    width: 0.5                             # ROI宽度 (归一化)
+    height: 0.5                            # ROI高度 (归一化)
+    
+  # 多线程
+  multithreading:
+    enable: false                          # 启用多线程
+    num_threads: 2                         # 线程数量
+
+# 标定参数
+calibration:
+  camera_matrix: [                         # 相机内参矩阵
+    [640.0, 0.0, 320.0],
+    [0.0, 640.0, 240.0],
+    [0.0, 0.0, 1.0]
+  ]
+  distortion_coefficients: [0.0, 0.0, 0.0, 0.0, 0.0]  # 畸变系数
+  
+  # 颜色校正
+  color_correction:
+    enable: false                          # 启用颜色校正
+    white_balance: [1.0, 1.0, 1.0]         # 白平衡系数
+
+# 数据记录配置
+data_logging:
+  enable: false                            # 启用数据记录
+  log_directory: "/tmp/vision_logs"        # 日志目录
+  log_frequency: 1.0                       # 记录频率 (Hz)
+  
+  # 记录的数据类型
+  log_types:
+    images: false                          # 记录图像
+    detections: true                       # 记录检测结果
+    tracking: true                         # 记录跟踪数据
+
+# 可视化配置
+visualization:
+  enable: true                             # 启用可视化
+  
+  # 显示选项
+  display:
+    show_fps: true                         # 显示帧率
+    show_detection_count: true             # 显示检测数量
+    show_crosshair: true                   # 显示十字线
+    
+  # 颜色配置
+  colors:
+    detection_box: [0, 255, 0]             # 检测框颜色 (BGR)
+    tracking_box: [0, 0, 255]              # 跟踪框颜色 (BGR)
+    text_color: [255, 255, 255]            # 文本颜色 (BGR)
+    crosshair_color: [255, 255, 255]       # 十字线颜色 (BGR)
